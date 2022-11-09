@@ -1,29 +1,33 @@
 package main
 
-import "fmt"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
-	a := 10
 
-	if a == 10 {
-		fmt.Println("True")
-	} else {
-		fmt.Println("False")
+	type StructB struct {
+		B           string `json:"b"`
+		QueryString string `form:"query"`
 	}
 
-	switch a {
-	case 10:
-		fmt.Println(10)
-	default:
-		fmt.Println("Default")
-	}
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
 
-	const b int = 11
+	r.POST("/getb/:query", func(c *gin.Context) {
+		key := c.Param("query")
+		var b StructB
+		c.Bind(&b)
 
-	fmt.Println(b)
+		c.JSON(200, gin.H{
+			"b":     b.B,
+			"query": key,
+		})
+	})
 
-	lastname := "Chouybumrung"
-
-	fmt.Printf("Samut %s", lastname)
-
+	r.Run()
 }
